@@ -1,0 +1,213 @@
+Prerequisite : Java jdk 1.8 should be downloaded and installed
+===========================================================================================================
+1. Download NPM(node.js) --> Go to node.js --> Downloads : run command "npm --version" in cmd to installation of NPM
+2. Install Protractor --> run command "npm install -g protractor" 
+3. Run command "webdriver-manager update"
+4. Run command "webdriver-manager start" --> u can see Selenium Server is up and running on port 4444.
+	url to check webdriver manager is up and running : http://localhost:4444/
+	
+5.
+============================================================================================================
+1. Download Visual Studio Code (https://code.visualstudio.com/download)
+2. Create a folder/project (Ex: C:\Protractor Code Practice)
+3. Open CMD and go to path of the folder created in above step (Ex: cd C:\Protractor Code Practice)
+4. Then run command npm init --> it will ask u to enter details like package etc., (enter pac name, desc, author etc., then enter)
+	This will create package.json (like POM.xml) file with all entered values in the folder and shown in the visualstudio.
+5. Go to visualstudio--> Add dependencies in package.json above the scripts. 
+	Ex: "dependencies": {
+			"protractor": "^5.4.1",
+			"jasmine": "^3.3.0"
+		},
+6. Go to Terminal (View-->Terminal) in visualstudio and run "npm install"
+7. Create a new file in visualstudio "conf.js" --> This contains the info about where server is running and spec details.
+	Ex: exports.config = {
+			seleniumAddress:'http://localhost:4444/wd/hub',
+			specs:['spec.js'] //We can run multiple specs by using comma seperated like['spec.js', 'spec1.js', spec2.js]
+		}
+8. Create test file "spec.js"
+	Ex: describe('Enter Name',function()
+		{
+			it('test value entered',function()
+			{
+				browser.get('https://angularjs.org/'); //https://qaclickacademy.github.io/protocommerce/
+				element(by.model('yourName')).sendKeys('Gowtham');
+				var expvalue = element(by.xpath("//h1[@class='ng-binding']")).getText();
+				expect(expvalue).toEqual('Hello Gowtham!');
+				//print(expvalue);
+
+			});
+		});
+		
+9. To exucute scripts Go to terminal and run "protractor conf.js"
+
+//Add snippet suggestions -- class2 (Naveen Automation Labs)
+===================================
+press "Ctrl+Shift+p" --> will be opened console with all suggestions --> select "Extensions:install Extensions" from suggestions
+Extensions will be shown in left sede pan : Install required extns like protractor, protractor test run, angular v snippet, javascript ES6, javascript standard style, npm, npm intellisence, jasmine code snippet, jasmine E5, run protractor many more.
+
+//Run multiple tests in single file: class3 (Naveen Automation Labs)
+============================================
+
+First show show simple one it function execution with assertion validation(expect)
+Then show how to show multiple scenarios like add, getTitle, getvalue entered for we will use function called "beforeEach" (This works as same as beforemethod/beforetests)==
+like we have to launch browserfor everytest, how have setup method in testNg
+
+In protractorno need to close;
+
+How pageobjects will be created and use this is not exactly same as pageobject model:
+
+Sample code:
+
+describe('mutliple tests', function(){
+
+    //global variable
+    var firstEle = element(by.model('first'));
+    var secondEle = element(by.model('second'));
+    var gobutton = element(by.id('gobutton'));
+    var result = element(by.className('ng-binding'));
+    // var result = element(by.xpath("//b[@class='result ng-binding']"));
+
+    beforeEach(function(){
+        browser.get('http://www.way2automation.com/angularjs-protractor/calc/');
+        browser.manage().window().maximize();
+    });
+
+    //test1
+    it('validate Title', function(){
+        var title = browser.getTitle();
+        expect(title).toContain('Calculator');
+        
+    });
+
+
+    //test2
+    it('sum of six and nine', function(){
+        firstEle.sendKeys(6);
+        secondEle.sendKeys(9);
+        //browser.driver.sleep(5000);
+        gobutton.click();
+        expect(result.getText()).toEqual('15');    
+    });
+	
+	//test3
+    it('Get the entered value',function(){
+        firstEle.sendKeys(67);
+        expect(firstEle.getAttribute('value')).toEqual('67');
+    });
+
+});
+
+
+//Different and multiple browsers
+=======================================
+Bydefault protractor runs on chrome but if we need to run on different browser, Add below block of code into conf.js
+capabilities: {
+        browserName: 'firefox' 
+    }
+
+to run multiple browsers simultaneously: add below code in conf.js
+    multiCapabilities: [{
+        browserName: 'firefox' 
+    },{
+        browserName: 'chrome'
+    }]
+
+//TO run multiple specs in single run:
+=============================================
+Add below code in conf.js
+specs:['spec.js','spec1.js','spec2.js',....]
+
+video-4
+==============================================
+
+//How to get list of elements:
+===================================
+how to get list of element like findElements menthod in prot.. we have element.All method
+
+element.all(by.id)==>will return element array finder, we will store in var.
+
+
+
+//Reusable function
+===========================
+
+describe('mutliple tests', function(){
+
+    //global variable
+    var firstEle = element(by.model('first'));
+    var secondEle = element(by.model('second'));
+    var gobutton = element(by.id('gobutton'));
+    var result = element(by.className('ng-binding'));
+    var history = element.all(by.repeater('result in memory'));
+    // var result = element(by.xpath("//b[@class='result ng-binding']"));
+
+    beforeEach(function(){
+        browser.get('http://www.way2automation.com/angularjs-protractor/calc/');
+        browser.manage().window().maximize();
+    });
+
+    //reusable function
+    function add(a,b){
+        firstEle.sendKeys(a);
+        secondEle.sendKeys(b);
+        gobutton.click();
+    }
+
+    //check his
+    it('resable',function(){
+        add(4,5);
+        add(8,9);
+        add(4,5);
+        expect(history.count()).toEqual(3);
+        add(45,56);
+        expect(history.count()).toEqual(4);
+    });
+    
+});
+
+//Locators in protractor
+===============================
+by.model (ng-model="value")
+by.repeater  (ng-repeate="value")
+by. binding (n-bind='value')
+by.buttonText (Text of the button)
+
+
+//Waits in protractor
+===================================
+browser.driver.sleep(300); --> Static wait like (Thread.sleep() in java);
+
+//To print in consol:
+=============================================
+var expvalue = element(by.id('gobutton')).getText();
+expvalue.then(function(text){
+            console.log(text);
+        });
+
+Headless Mode: need to check what is phantomJS﻿?
+================================================
+se this conf.js it will work for headless
+// conf.js
+exports.config = {
+  
+  capabilities: {
+    'directConnect': true,
+    'browserName': 'chrome',
+     chromeOptions: {
+        args: ["--headless", "--disable-gpu", "--window-size=800x600"]
+    }
+},
+  framework: 'jasmine',
+  specs: ['headlessChrome.js'],
+  jasmineNodeOpts: {
+    defaultTimeoutInterval: 90000
+},
+onPrepare: function () {
+    browser.manage().timeouts().implicitlyWait(20000);
+}
+};﻿
+
+
+
+	
+

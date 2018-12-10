@@ -1,5 +1,8 @@
 
+var using = require('jasmine-data-provider');
+var d = require('../Resources/data.js');
 var calc = require('../pages/calculator_page.js');
+
 describe('testing calculator',function(){
 
     beforeEach(function(){
@@ -7,7 +10,20 @@ describe('testing calculator',function(){
 
     });
 
-    it('test Addition',function(){
+    using(d.calcData, function(data, description){
+        
+        it('validate : '+description, function() {
+            calc.firstValue.sendKeys(data.firstValue);
+            calc.secondValue.sendKeys(data.secondValue);
+            calc.operation(data.operation).click();
+            calc.goButton.click();
+            expect(calc.result()).toEqual(data.result);
+            
+        });
+            
+    });
+
+    xit('test Addition',function(){
         calc.firstValue.sendKeys(10);
         calc.secondValue.sendKeys(20);
         calc.operation('+').click();
@@ -21,7 +37,7 @@ describe('testing calculator',function(){
         calc.secondValue.sendKeys(20);
         calc.operation('/').click();
         calc.goButton.click();
-        expect(calc.result()).toEqual('0.5');
+        expect(calc.result()).toEqual('0.55');
 
     });
 

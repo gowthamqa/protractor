@@ -52,7 +52,7 @@ describe('Testing customer features', function() {
             console.log(text);
         });
 
-        expect(element(by.css('span[class=\'error ng-binding\']')).getText()).toEqual('.Transaction Successful')
+        expect(element(by.css('span[class=\'error ng-binding\']')).getText()).toEqual('Transaction Successful')
 
 
     });
